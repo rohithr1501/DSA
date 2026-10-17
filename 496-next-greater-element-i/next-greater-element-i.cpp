@@ -1,32 +1,32 @@
-#include <vector>
-#include <unordered_map>
-#include <stack>
-
 class Solution {
 public:
-    std::vector<int> nextGreaterElement(std::vector<int>& nums1, std::vector<int>& nums2) {
-        std::unordered_map<int, int> nextGreater;
+    vector<int> nextGreaterElement(vector<int>& nums1, vector<int>& nums2) {
+
+        std::unordered_map<int, int> mapnextGreater;
+
         std::stack<int> st;
 
-        for (int num : nums2) {
-            while (!st.empty() && st.top() < num) {
-                nextGreater[st.top()] = num;
+        std::vector<int> result(nums1.size(), -1);
+
+        for (int i = nums2.size() - 1; i >= 0; i--) {
+            while (!st.empty() && nums2[i] >= st.top()) {
                 st.pop();
             }
-            st.push(num);
+
+            if (!st.empty()) {
+                mapnextGreater[nums2[i]] = st.top();
+            }
+            st.push(nums2[i]);
         }
 
+        for (int i = 0; i < nums1.size(); i++) {
 
-        std::vector<int> result;
-        result.reserve(nums1.size());
-        for (int num : nums1) {
-            if (nextGreater.count(num)) {
-                result.push_back(nextGreater[num]);
+            if (mapnextGreater[nums1[i]] == 0) {
+                result[i] = -1;
             } else {
-                result.push_back(-1);
+                result[i] = mapnextGreater[nums1[i]];
             }
         }
-
         return result;
     }
 };
