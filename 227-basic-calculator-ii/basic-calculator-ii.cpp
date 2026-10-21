@@ -1,52 +1,39 @@
 class Solution {
 public:
     int calculate(string s) {
-        vector<long long> nums;
-        vector<char> op;
-        long long currentNumber = 0;
-        
-   
-        for (int i = 0; i < s.length(); i++) {
-            char c = s[i];
-            if (isdigit(c)) {
-                currentNumber = currentNumber * 10 + (c - '0');
-            }
-            
-            if ((!isdigit(c) && !isspace(c)) || i == s.length() - 1) {
-                nums.push_back(currentNumber);
-                if (i != s.length() - 1) {
-                    op.push_back(c);
+
+        int num = 0;
+        int op = '+';
+        stack<int> st;
+        for (int i = 0; i <= s.size(); i++) {
+
+            char ch = (i == s.size()) ? '+' : s[i];
+            if (isdigit(ch)) {
+                num = num * 10 + (ch - '0');
+            } else if (ch != ' ') {
+                if (op == '+') {
+                    st.push(+num);
+                } else if (op == '-') {
+                    st.push(-num);
+                } else if (op == '*') {
+                    int poped = st.top();
+                    st.pop();
+                    st.push(poped * num);
+
+                } else if (op == '/') {
+                    int poped = st.top();
+                    st.pop();
+                    st.push(poped / num);
                 }
-                currentNumber = 0;
+                op = ch;
+                num = 0;
             }
         }
-        
-  
-        for (int i = 0; i < op.size(); ) {
-            if (op[i] == '*' || op[i] == '/') {
-                if (op[i] == '*') {
-                    nums[i] = nums[i] * nums[i + 1];
-                } else {
-                    nums[i] = nums[i] / nums[i + 1];
-                }
-              
-                nums.erase(nums.begin() + i + 1);
-                op.erase(op.begin() + i);
-            } else {
-                i++;
-            }
+        int ans = 0;
+        while (!st.empty()) {
+            ans += st.top();
+            st.pop();
         }
-        
-       
-        long long result = nums[0];
-        for (size_t i = 0; i < op.size(); i++) {
-            if (op[i] == '+') {
-                result += nums[i + 1];
-            } else if (op[i] == '-') {
-                result -= nums[i + 1];
-            }
-        }
-        
-        return result;
+        return ans;
     }
 };
